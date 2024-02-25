@@ -1,5 +1,5 @@
 const { program } = require("commander");
-const contacts = require("./db");
+const contacts = require("./contacts.js");
 program
   .option("-a, --action <type>", "choose action")
   .option("-i, --id <type>", "user id")
