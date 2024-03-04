@@ -1,39 +1,50 @@
-const fs = require("fs/promises");
-const path = require("path");
-const { nanoid } = require("nanoid");
-const contactsPath = path.join("../db", "contacts.json");
+// const fs = require("fs/promises");
+// const path = require("path");
+// const { nanoid } = require("nanoid");
+
+import fs from "fs/promises";
+import path from "path";
+import { nanoid } from "nanoid";
+
+const contactsPath = path.join("db", "contacts.json");
+import contacts from "../db/contacts.json" assert { type: "json" };
 
 // TODO: задокументувати кожну функцію
-async function listContacts() {
-  const data = await fs.readFile(contactsPath);
-  return JSON.parse(data);
+export async function listContacts() {
+  // const data = await fs.readFile(contactsPath);
+  // console.log(contacts);
+  return contacts;
 }
 
-async function getContactById(contactId) {
-  const data = await listContacts();
-  return data.find((item) => item.id === contactId) || null;
+export async function getContactById(contactId) {
+  return contacts.find((item) => item.id === contactId) || null;
 }
 
-async function removeContact(contactId) {
-  const data = await listContacts();
-  const index = data.findIndex((item) => item.id === contactId);
+export async function removeContact(contactId) {
+  // const data = await listContacts();
+  const index = contacts.findIndex((item) => item.id === contactId);
 
   if (index === -1) return null;
 
-  const [result] = data.splice(index, 1);
+  const [result] = contacts.splice(index, 1);
 
-  await fs.writeFile(contactsPath, JSON.stringify(data, null, 2));
+  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
   return result;
 }
 
-async function addContact(data) {
+export async function addContact(data) {
   const all = await listContacts();
   all.push({ id: nanoid(), ...data });
   return await fs.writeFile(contactsPath, JSON.stringify(all, null, 2));
 }
-module.exports = {
-  listContacts,
-  getContactById,
-  removeContact,
-  addContact,
-};
+
+// export async function updateContact(data) {
+
+// }
+
+// module.exports = {
+//   listContacts,
+//   getContactById,
+//   removeContact,
+//   addContact,
+// };

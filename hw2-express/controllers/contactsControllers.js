@@ -4,33 +4,37 @@ import {
   removeContact,
   addContact,
 } from "../services/contactsServices.js";
-import { HttpError } from "../helpers/HttpError.js";
+import HttpError from "../helpers/HttpError.js";
 
-export const getAllContacts = (req, res) => {
-  res.json(listContacts());
-};
+// export const getAllContacts = (req, res) => {
+//   res.json();
+// };
 
-export const getOneContact = (req, res) => {
+export async function getAllContacts(req, res) {
+  res.json(await listContacts());
+}
+
+export async function getOneContact(req, res, next) {
   try {
     const { id } = req.params;
-    const result = getContactById(id);
-    if (!result) throw HttpError(404, "Not found");
+    const result = await getContactById(id);
+    if (!result) throw HttpError(404, `${id} Not found`);
     res.json(result);
   } catch (error) {
     next(error);
   }
-};
+}
 
-export const deleteContact = (req, res) => {
+export async function deleteContact(req, res, next) {
   try {
     const { id } = req.params;
-    const result = getContactById(id);
-    if (!result) throw HttpError(404, "Not found");
-    res.json(removeContact(id));
+    const result = await getContactById(id);
+    if (!result) throw HttpError(404, `${id} Not found`);
+    res.json(await removeContact(id));
   } catch (error) {
     next(error);
   }
-};
+}
 
 export const createContact = (req, res) => {
   try {
@@ -42,4 +46,10 @@ export const createContact = (req, res) => {
   }
 };
 
-export const updateContact = (req, res) => {};
+export const updateContact = (req, res) => {
+  try {
+    throw HttpError(500, "Not done yet");
+  } catch (error) {
+    next(error);
+  }
+};
