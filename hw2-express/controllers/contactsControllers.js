@@ -5,16 +5,17 @@ import {
   addContact,
 } from "../services/contactsServices.js";
 import HttpError from "../helpers/HttpError.js";
+import CtrlWrap from "../helpers/CtrlWrap.js";
 
 // export const getAllContacts = (req, res) => {
 //   res.json();
 // };
 
-export async function getAllContacts(req, res) {
+async function getAllContacts(req, res) {
   res.json(await listContacts());
 }
 
-export async function getOneContact(req, res, next) {
+async function getOneContact(req, res, next) {
   try {
     const { id } = req.params;
     const result = await getContactById(id);
@@ -25,18 +26,21 @@ export async function getOneContact(req, res, next) {
   }
 }
 
-export async function deleteContact(req, res, next) {
+async function deleteContact(req, res, next) {
   try {
     const { id } = req.params;
-    const result = await getContactById(id);
+    const result = await removeContact(id);
     if (!result) throw HttpError(404, `${id} Not found`);
-    res.json(await removeContact(id));
+    res.json({
+      message: `deleted succesfully`,
+      id: `${id}`,
+    });
   } catch (error) {
     next(error);
   }
 }
 
-export const createContact = (req, res) => {
+async function createContact(req, res) {
   try {
     const { name, phone, email } = req.params;
     if (!name || !phone || !email) throw HttpError(403, "Not enough data");
@@ -44,12 +48,26 @@ export const createContact = (req, res) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-export const updateContact = (req, res) => {
+async function updateContact(req, res) {
   try {
     throw HttpError(500, "Not done yet");
   } catch (error) {
     next(error);
   }
+}
+
+export {
+  getAllContacts,
+  getOneContact,
+  deleteContact,
+  createContact,
+  updateContact,
 };
+
+// export const getAllContacts = CtrlWrap(getAllContacts);
+// export const getOneContact = CtrlWrap(getOneContact);
+// export const deleteContact = CtrlWrap(deleteContact);
+// export const createContact = CtrlWrap(createContact);
+// export const updateContact = CtrlWrap(updateContact);
