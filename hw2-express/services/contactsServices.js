@@ -12,7 +12,7 @@ import contacts from "../db/contacts.json" assert { type: "json" };
 // TODO: задокументувати кожну функцію
 export async function listContacts() {
   // const data = await fs.readFile(contactsPath);
-  // console.log(contacts);
+
   return contacts;
 }
 
@@ -35,12 +35,18 @@ export async function removeContact(contactId) {
 export async function addContact(data) {
   const all = await listContacts();
   all.push({ id: nanoid(), ...data });
-  return await fs.writeFile(contactsPath, JSON.stringify(all, null, 2));
+  await fs.writeFile(contactsPath, JSON.stringify(all, null, 2));
+  return data;
 }
 
-// export async function updateContact(data) {
-
-// }
+export async function updContact(contactId, data) {
+  console.log(data);
+  const index = contacts.findIndex((item) => item.id === contactId);
+  if (index === -1) return null;
+  contacts[index] = { id: contactId, ...data };
+  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+  return contacts[index];
+}
 
 // module.exports = {
 //   listContacts,

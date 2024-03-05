@@ -3,12 +3,16 @@ import {
   getContactById,
   removeContact,
   addContact,
+  updContact,
 } from "../services/contactsServices.js";
 import HttpError from "../helpers/HttpError.js";
 
-// export const getAllContacts = (req, res) => {
-//   res.json();
-// };
+import {
+  createContactSchema,
+  updateContactSchema,
+} from "../schemas/contactsSchemas.js";
+
+import validateBody from "../helpers/validateBody.js";
 
 async function getAllContacts(req, res) {
   res.json(await listContacts());
@@ -32,13 +36,20 @@ async function deleteContact(req, res, next) {
 }
 
 async function createContact(req, res) {
-  const { name, phone, email } = req.params;
-  if (!name || !phone || !email) throw HttpError(403, "Not enough data");
-  res.json(addContact({ name, phone, email }));
+  validateBody(createContactSchema.validate(req.body));
+  const { name, phone, email } = req.body;
+  res.status(201).json(await addContact({ name, phone, email }));
 }
 
 async function updateContact(req, res) {
-  throw HttpError(500, "Not done yet");
+  const { id } = req.params;
+  const result = await getContactById(id);
+  if (!result) throw HttpError(404, `${id} Not found`);
+
+  validateBody(updateContactSchema.validate(req.body));
+
+  const { name, phone, email } = req.body;
+  res.status(201).json(await updContact(id, { name, phone, email }));
 }
 
 export {
@@ -48,9 +59,3 @@ export {
   createContact,
   updateContact,
 };
-
-// export const getAllContacts = CtrlWrap(getAllContacts);
-// export const getOneContact = CtrlWrap(getOneContact);
-// export const deleteContact = CtrlWrap(deleteContact);
-// export const createContact = CtrlWrap(createContact);
-// export const updateContact = CtrlWrap(updateContact);
