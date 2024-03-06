@@ -34,9 +34,10 @@ export async function removeContact(contactId) {
 
 export async function addContact(data) {
   const all = await listContacts();
-  all.push({ id: nanoid(), ...data });
+  const contact = { id: nanoid(), ...data };
+  all.push(contact);
   await fs.writeFile(contactsPath, JSON.stringify(all, null, 2));
-  return data;
+  return contact;
 }
 
 export async function updContact(contactId, data) {
